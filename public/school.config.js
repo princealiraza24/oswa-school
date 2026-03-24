@@ -34,7 +34,7 @@ const SCHOOL_CONFIG = {
 
   // ── PUSH NOTIFICATIONS ─────────────────────────────────────
   // These are shared across all schools (Zyveron's keys)
-  vapid_public: "BKNbHEw95d4wgaP4m0njpXbPcGRrFC7Wy5aEV4s_XrwGA0gQOr0rJUcoHNLA_NwD0y-i9vUNspPWoPv6etOcj6c",
+  vapid_public: "BDt7dBtU0ajMBY5F-TpH5ZwSRTG8nJFhxWaCtMa2swYBeqtGb5w8HmbcZ2WMWdowvNIUQ_jQ2-36M7hctEpjJeI",
 
 };
 
