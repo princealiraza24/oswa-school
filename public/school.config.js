@@ -28,8 +28,8 @@ const SCHOOL_CONFIG = {
 
   // ── SUPABASE DATABASE ──────────────────────────────────────
   // Get from supabase.com → your project → Settings → API
-  supabase_url: "https://vjgshplfxwyrzhamrrde.supabase.co",
-  supabase_key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqZ3NocGxmeHd5cnpoYW1ycmRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5ODMxNDAsImV4cCI6MjA4OTU1OTE0MH0.w36AYeFFXrZvQFV3a_H3RyQCOEGRy4hcgWINDmMxe34",
+  supabase_url: "https://tpkbyqsprqxhjwfzetjo.supabase.co",
+  supabase_key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwa2J5cXNwcnF4aGp3ZnpldGpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzkwNTMsImV4cCI6MjA4OTkxNTA1M30.cjoGddHvbDP2FGRyiymRWK9WKfEcLviBrV0HdFSP27A",
   school_id:    "vjgshplfxwyrzhamrrde",
 
   // ── PUSH NOTIFICATIONS ─────────────────────────────────────
