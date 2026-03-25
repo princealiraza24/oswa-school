@@ -1,21 +1,20 @@
--- ══════════════════════════════════════════════
--- EduMatrix Online — Supabase Schema
--- Run this in Supabase → SQL Editor → New Query
--- ══════════════════════════════════════════════
+-- ══════════════════════════════════════════════════════════════════════════
+-- EduMatrix Complete Schema — By Zyveron Technologies, Faisalabad
+-- Run this ONCE in new school's Supabase SQL Editor
+-- ══════════════════════════════════════════════════════════════════════════
 
--- Schools table (multi-school support)
+-- ── SCHOOLS ───────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS schools (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   address TEXT,
   phone TEXT,
   email TEXT,
-  logo_url TEXT,
   session TEXT DEFAULT '2025-26',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Users table
+-- ── USERS ─────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
@@ -28,7 +27,7 @@ CREATE TABLE IF NOT EXISTS users (
   UNIQUE(school_id, username)
 );
 
--- Classes table
+-- ── CLASSES ───────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS classes (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
@@ -38,7 +37,7 @@ CREATE TABLE IF NOT EXISTS classes (
   UNIQUE(school_id, name)
 );
 
--- Students table
+-- ── STUDENTS ──────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS students (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
@@ -51,12 +50,15 @@ CREATE TABLE IF NOT EXISTS students (
   parent_contact TEXT,
   dob TEXT,
   status TEXT DEFAULT 'Active',
-  user_id UUID REFERENCES users(id),
+  student_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  parent_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  callmebot_key TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(school_id, roll_no)
+  -- Roll number unique per class only (not whole school)
+  UNIQUE(school_id, class, roll_no)
 );
 
--- Attendance table
+-- ── ATTENDANCE ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS attendance (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
@@ -64,26 +66,25 @@ CREATE TABLE IF NOT EXISTS attendance (
   date DATE NOT NULL,
   status TEXT NOT NULL CHECK(status IN ('Present','Absent','Late')),
   note TEXT,
-  marked_by UUID REFERENCES users(id),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(school_id, student_id, date)
 );
 
--- Fees table
+-- ── FEES ──────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS fees (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
   student_id UUID REFERENCES students(id) ON DELETE CASCADE,
   month TEXT NOT NULL,
-  amount_due NUMERIC NOT NULL,
-  amount_paid NUMERIC DEFAULT 0,
+  amount_due NUMERIC NOT NULL DEFAULT 0,
+  amount_paid NUMERIC NOT NULL DEFAULT 0,
   paid_date DATE,
   payment_method TEXT DEFAULT 'Cash',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(school_id, student_id, month)
 );
 
--- Announcements table
+-- ── ANNOUNCEMENTS ─────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS announcements (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
@@ -91,11 +92,11 @@ CREATE TABLE IF NOT EXISTS announcements (
   body TEXT,
   category TEXT DEFAULT 'General',
   audience TEXT DEFAULT 'Everyone',
-  created_by UUID REFERENCES users(id),
+  created_by UUID REFERENCES users(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Papers table
+-- ── PAPERS ────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS papers (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
@@ -110,7 +111,7 @@ CREATE TABLE IF NOT EXISTS papers (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Results table
+-- ── RESULTS ───────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS results (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
@@ -121,7 +122,23 @@ CREATE TABLE IF NOT EXISTS results (
   UNIQUE(school_id, student_id, paper_id)
 );
 
--- SMS logs table
+-- ── DIARIES / HOMEWORK ────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS diaries (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
+  class TEXT NOT NULL,
+  section TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  date DATE NOT NULL,
+  homework TEXT NOT NULL,
+  due_date DATE,
+  note TEXT,
+  created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_by_name TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ── SMS LOGS ──────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS sms_logs (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
@@ -131,34 +148,60 @@ CREATE TABLE IF NOT EXISTS sms_logs (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ══════════════════════════════════════════════
--- Seed default school + admin
--- ══════════════════════════════════════════════
-INSERT INTO schools (id, name, address, session)
-VALUES ('00000000-0000-0000-0000-000000000001', 'EduMatrix School', 'Faisalabad, Pakistan', '2025-26')
-ON CONFLICT DO NOTHING;
+-- ── PUSH SUBSCRIPTIONS ────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+  subscription TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
+-- ══════════════════════════════════════════════════════════════════════════
+-- DISABLE ROW LEVEL SECURITY ON ALL TABLES
+-- ══════════════════════════════════════════════════════════════════════════
+ALTER TABLE schools            DISABLE ROW LEVEL SECURITY;
+ALTER TABLE users              DISABLE ROW LEVEL SECURITY;
+ALTER TABLE classes            DISABLE ROW LEVEL SECURITY;
+ALTER TABLE students           DISABLE ROW LEVEL SECURITY;
+ALTER TABLE attendance         DISABLE ROW LEVEL SECURITY;
+ALTER TABLE fees               DISABLE ROW LEVEL SECURITY;
+ALTER TABLE announcements      DISABLE ROW LEVEL SECURITY;
+ALTER TABLE papers             DISABLE ROW LEVEL SECURITY;
+ALTER TABLE results            DISABLE ROW LEVEL SECURITY;
+ALTER TABLE diaries            DISABLE ROW LEVEL SECURITY;
+ALTER TABLE sms_logs           DISABLE ROW LEVEL SECURITY;
+ALTER TABLE push_subscriptions DISABLE ROW LEVEL SECURITY;
+
+-- ══════════════════════════════════════════════════════════════════════════
+-- SEED DATA — Default school, admin, teacher, classes
+-- IMPORTANT: Copy the school ID shown after running this
+-- ══════════════════════════════════════════════════════════════════════════
+
+-- Insert school and get its ID
+INSERT INTO schools (name, address, session)
+VALUES ('EduMatrix School', 'Faisalabad, Pakistan', '2025-26')
+RETURNING id, name;
+
+-- ══════════════════════════════════════════════════════════════════════════
+-- AFTER RUNNING ABOVE:
+-- 1. Copy the school ID from results
+-- 2. Replace 'SCHOOL_ID_HERE' below with that ID
+-- 3. Run the rest of this script
+-- ══════════════════════════════════════════════════════════════════════════
+
+-- INSERT USERS (replace SCHOOL_ID_HERE with actual ID)
+/*
 INSERT INTO users (school_id, name, username, password, role)
 VALUES
-  ('00000000-0000-0000-0000-000000000001', 'Principal', 'admin', 'admin123', 'admin'),
-  ('00000000-0000-0000-0000-000000000001', 'Ms. Sana Butt', 'teacher', 'teach123', 'teacher')
-ON CONFLICT DO NOTHING;
+  ('SCHOOL_ID_HERE', 'Principal', 'admin', 'admin123', 'admin'),
+  ('SCHOOL_ID_HERE', 'Teacher', 'teacher', 'teach123', 'teacher');
 
 INSERT INTO classes (school_id, name, sections)
 VALUES
-  ('00000000-0000-0000-0000-000000000001', '6',  'A,B'),
-  ('00000000-0000-0000-0000-000000000001', '7',  'A,B'),
-  ('00000000-0000-0000-0000-000000000001', '8',  'A,B'),
-  ('00000000-0000-0000-0000-000000000001', '9',  'A,B'),
-  ('00000000-0000-0000-0000-000000000001', '10', 'A,B')
-ON CONFLICT DO NOTHING;
-
-INSERT INTO students (school_id, roll_no, name, father_name, class, section, contact, parent_contact)
-VALUES
-  ('00000000-0000-0000-0000-000000000001','1001','Ahmed Ali','Muhammad Ali','9','A','0300-1234567','0300-1234567'),
-  ('00000000-0000-0000-0000-000000000001','1002','Fatima Noor','Noor Hassan','9','A','0312-9876543','0312-9876543'),
-  ('00000000-0000-0000-0000-000000000001','1003','Bilal Raza','Raza Ahmed','9','B','0321-5554433','0321-5554433'),
-  ('00000000-0000-0000-0000-000000000001','1004','Zara Khan','Imran Khan','10','A','0333-7778899','0333-7778899'),
-  ('00000000-0000-0000-0000-000000000001','1005','Hamza Tariq','Tariq Mehmood','10','A','0346-2223344','0346-2223344'),
-  ('00000000-0000-0000-0000-000000000001','1006','Ayesha Malik','Saleem Malik','10','B','0311-6667788','0311-6667788')
-ON CONFLICT DO NOTHING;
+  ('SCHOOL_ID_HERE', '6',  'A,B'),
+  ('SCHOOL_ID_HERE', '7',  'A,B'),
+  ('SCHOOL_ID_HERE', '8',  'A,B'),
+  ('SCHOOL_ID_HERE', '9',  'A,B'),
+  ('SCHOOL_ID_HERE', '10', 'A,B');
+*/
