@@ -127,7 +127,7 @@ app.post('/api/attendance', async (req, res) => {
       // Send SMS
       if (stu.parent_contact) {
         await sendSMS(stu.parent_contact,
-          `Dear Parent, your child ${stu.name} was ABSENT on ${date}. - EduMatrix School`);
+          `Dear Parent, your child ${stu.name} was ABSENT on ${date}. - Oswa-Science School`);
       }
       // Send Push Notification
       if (stu.parent_user_id) {
@@ -225,9 +225,9 @@ app.post('/api/announcements', async (req, res) => {
   const { data, error } = await supabase.from('announcements')
     .insert({ ...req.body, school_id: SCHOOL_ID }).select().single();
   if (!error && data) {
-    await sendPushToRole('student', '📢 School Notice — ' + data.title, data.body || 'Tap to view in EduMatrix app.');
-    await sendPushToRole('parent',  '📢 School Notice — ' + data.title, data.body || 'Tap to view in EduMatrix app.');
-    await sendPushToRole('teacher', '📢 New Announcement — ' + data.title, data.body || 'Tap to view in EduMatrix app.');
+    await sendPushToRole('student', '📢 School Notice — ' + data.title, data.body || 'Tap to view in Oswa-Science app.');
+    await sendPushToRole('parent',  '📢 School Notice — ' + data.title, data.body || 'Tap to view in Oswa-Science app.');
+    await sendPushToRole('teacher', '📢 New Announcement — ' + data.title, data.body || 'Tap to view in Oswa-Science app.');
   }
   res.json(error ? { ok: false } : { ok: true, data });
 });
@@ -430,7 +430,7 @@ app.post('/api/push/test', async (req, res) => {
   const { user_id, title, body } = req.body;
   await sendPushToUser(
     user_id,
-    title || '✅ EduMatrix Notifications Active',
+    title || '✅ Oswa-School Notifications Active',
     body  || 'Notifications working! You will be alerted when your child is absent.'
   );
   res.json({ ok: true });
