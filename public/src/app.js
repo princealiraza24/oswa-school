@@ -648,7 +648,7 @@ async function secFees(c){
   await rFees();
 }
 const receiptHtml=(name,due,paid,month)=>`<div class="receipt" id="print-area">
-  <div class="receipt-head"><h2>EduMatrix School</h2><p>Fee Receipt — ${month}</p></div>
+  <div class="receipt-head"><h2>Oswa Science School</h2><p>Fee Receipt — ${month}</p></div>
   <div class="rr"><span class="rl">Student</span><span>${name}</span></div>
   <div class="rr"><span class="rl">Month</span><span>${month}</span></div>
   <div class="rr"><span class="rl">Fee Due</span><span>Rs ${fmt(due)}</span></div>
@@ -1335,7 +1335,7 @@ async function secSMS(c){
     const res = await POST('/push/test', {
       user_id: CU.id,
       title: '✅ Test Notification',
-      body: 'EduMatrix push notifications are working!'
+      body: 'Oswa-School push notifications are working!'
     });
     if (res?.ok !== false) toast('Test notification sent! Check your phone.', 'ok');
     else toast('Error sending notification', 'err');
@@ -1343,7 +1343,7 @@ async function secSMS(c){
 
   window.testSMS = () => openModal('Send Test SMS',
     `<div class="field"><label>Phone Number</label><input id="sms-to" placeholder="e.g. 0300-1234567"></div>
-     <div class="field"><label>Message</label><textarea id="sms-msg" rows="3">Test message from EduMatrix School System.</textarea></div>`,
+     <div class="field"><label>Message</label><textarea id="sms-msg" rows="3">Test message from Oswa-Science School System.</textarea></div>`,
     `<button class="btn" onclick="closeModal()">Cancel</button>
      <button class="btn bp" onclick="doTestSMS()">Send</button>`);
 
@@ -2061,7 +2061,7 @@ async function secNotifications(c) {
     if (Notification.permission === 'granted') {
       const res = await POST('/push/test', {
         user_id: CU.id,
-        title: '🔔 EduMatrix Alert',
+        title: '🔔 OSWA-SCIENCE Alert',
         body: 'Notifications are working! You will be notified when your child is absent.'
       });
       if (res?.ok !== false) toast('Test notification sent to your phone!', 'ok');
