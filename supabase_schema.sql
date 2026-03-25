@@ -191,17 +191,15 @@ RETURNING id, name;
 -- ══════════════════════════════════════════════════════════════════════════
 
 -- INSERT USERS (replace SCHOOL_ID_HERE with actual ID)
-/*
 INSERT INTO users (school_id, name, username, password, role)
 VALUES
-  ('SCHOOL_ID_HERE', 'Principal', 'admin', 'admin123', 'admin'),
-  ('SCHOOL_ID_HERE', 'Teacher', 'teacher', 'teach123', 'teacher');
+  ('d6935de2-528e-41c9-922b-7b92c2207331', 'Principal', 'admin', 'admin123', 'admin'),
+  ('d6935de2-528e-41c9-922b-7b92c2207331', 'Teacher', 'teacher', 'teach123', 'teacher');
 
 INSERT INTO classes (school_id, name, sections)
 VALUES
-  ('SCHOOL_ID_HERE', '6',  'A,B'),
-  ('SCHOOL_ID_HERE', '7',  'A,B'),
-  ('SCHOOL_ID_HERE', '8',  'A,B'),
-  ('SCHOOL_ID_HERE', '9',  'A,B'),
-  ('SCHOOL_ID_HERE', '10', 'A,B');
-*/
+  ('d6935de2-528e-41c9-922b-7b92c2207331', '6',  'A,B'),
+  ('d6935de2-528e-41c9-922b-7b92c2207331', '7',  'A,B'),
+  ('d6935de2-528e-41c9-922b-7b92c2207331', '8',  'A,B'),
+  ('d6935de2-528e-41c9-922b-7b92c2207331', '9',  'A,B'),
+  ('d6935de2-528e-41c9-922b-7b92c2207331', '10', 'A,B');
