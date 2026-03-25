@@ -12,12 +12,12 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 
-const SCHOOL_ID = '00000000-0000-0000-0000-000000000001';
+const SCHOOL_ID = 'd6935de2-528e-41c9-922b-7b92c2207331';
 
 webpush.setVapidDetails(
   'mailto:admin@edumatrix.pk',
-  process.env.VAPID_PUBLIC_KEY || 'BKNbHEw95d4wgaP4m0njpXbPcGRrFC7Wy5aEV4s_XrwGA0gQOr0rJUcoHNLA_NwD0y-i9vUNspPWoPv6etOcj6c',
-  process.env.VAPID_PRIVATE_KEY || 'rENa_MqBxGDBBI3C2affiw1fDgBZFX-bCT_OxYICB8U'
+  process.env.VAPID_PUBLIC_KEY || 'BKzLEyfLsP_gw11C1a9D_fLeWv7ZQVCwU6T8E-3BULUugsSb3n5NcVxDZdrePpe6j6UCFAfGLjdn2jKWOvb_-HU',
+  process.env.VAPID_PRIVATE_KEY || 'qCTVN-fPQR4NUbcC4pZTaFuumgl-upkfduoJlxnTWEQ'
 );
 
 // ── AUTH ───────────────────────────────────────────────────────────────────
